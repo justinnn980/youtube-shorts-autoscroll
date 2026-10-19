@@ -8,12 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		110000010000000000000001 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 110000020000000000000001 /* main.m */; };
+		110000100000000000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 110000110000000000000001 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		110000020000000000000001 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		110000030000000000000001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		110000040000000000000001 /* AutoShorts.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AutoShorts.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		110000110000000000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +33,7 @@
 			isa = PBXGroup;
 			children = (
 				110000020000000000000001 /* main.m */,
+				110000110000000000000001 /* Assets.xcassets */,
 				110000030000000000000001 /* Info.plist */,
 				110000070000000000000001 /* Products */,
 			);
@@ -70,7 +73,13 @@
 		1100000C0000000000000001 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1500;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					110000080000000000000001 = {
+						DevelopmentTeam = Q6W5CNCNBZ;
+						ProvisioningStyle = Automatic;
+					};
+				};
 			};
 			buildConfigurationList = 1100000D0000000000000001 /* Build configuration list for PBXProject "AutoShorts" */;
 			compatibilityVersion = "Xcode 14.0";
@@ -95,6 +104,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				110000100000000000000001 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,12 +135,17 @@
 		1100000F0000000000000001 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Q6W5CNCNBZ;
+				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0.0;
 				OTHER_LDFLAGS = (
 					"-framework",
 					"UIKit",
@@ -142,6 +157,10 @@
 					"CoreMotion",
 					"-framework",
 					"AVFoundation",
+					"-framework",
+					"CoreGraphics",
+					"-framework",
+					"QuartzCore",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.autoshorts.snapshorts.ios;
 				PRODUCT_NAME = "$(TARGET_NAME)";

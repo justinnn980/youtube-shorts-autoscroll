@@ -75,3 +75,4 @@ codesign --force --sign - "$APP_DIR/AutoShorts"
 (cd "$BUILD_DIR" && zip -qry "$OUT_IPA" Payload)
 ls -lh "$OUT_IPA"
 echo "Done! Output: $OUT_IPA"
+
