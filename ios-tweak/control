@@ -1,0 +1,10 @@
+Package: com.autoshorts.youtube.ios
+Name: YouTubeAutoShorts
+Version: 1.0.0
+Architecture: iphoneos-arm64
+Description: Auto-scroll YouTube Shorts when video playback finishes, controlled directly inside YouTube Settings.
+Maintainer: AutoShorts
+Author: AutoShorts
+Section: Tweaks
+Depends: mobilesubstrate (>= 0.9.5000)
+

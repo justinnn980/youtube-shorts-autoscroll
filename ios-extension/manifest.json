@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Shorts 자동 넘김 (순정 설정 연동)",
+  "version": "1.0.0",
+  "description": "유튜브 쇼츠 영상이 끝까지 재생되면 반복 재생되지 않고 자동으로 다음 쇼츠로 넘어갑니다. 화면을 가리는 버튼 없이 설정에서 ON/OFF 가능합니다.",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "*://*.youtube.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Shorts 자동 넘김 설정"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://www.youtube.com/*",
+        "*://m.youtube.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
+

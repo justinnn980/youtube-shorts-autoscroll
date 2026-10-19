@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>유튜브 쇼츠 자동 넘김 (아이폰·갤럭시·PC) - 순정 YouTube 어플 반복재생 끄기 & 완벽 설치 가이드</title>
+  <meta name="description" content="유튜브 쇼츠 자동으로 넘어가게 하는 법! 아이폰(iOS), 갤럭시(안드로이드), PC 크롬에서 순정 유튜브 공식 어플 그대로 쇼츠 영상이 끝날 때 반복 재생 없이 자동으로 다음 쇼츠로 넘겨주는 AutoShorts 무료 다운로드 및 초보자 3분 설치 가이드." />
+  <meta name="keywords" content="유튜브 쇼츠 자동 넘김, 유튜브 쇼츠 자동으로 넘어가게, 아이폰 유튜브 쇼츠 자동 넘김, 갤럭시 유튜브 쇼츠 자동 넘김, 유튜브 쇼츠 반복재생 끄기, 쇼츠 자동 스크롤, YouTube Shorts auto scroll, AutoShorts" />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta property="og:site_name" content="AutoShorts - 유튜브 쇼츠 자동 넘김 공식 센터" />
+  <meta property="og:title" content="유튜브 쇼츠 자동 넘김 (아이폰·갤럭시·PC) - 순정 YouTube 어플 그대로" />
+  <meta property="og:description" content="손가락 아프게 쇼츠 넘기지 마세요! 순정 유튜브 공식 어플에서 쇼츠가 끝까지 재생되면 자동으로 다음 영상으로 넘겨줍니다." />
+  <link rel="alternate" type="application/rss+xml" title="AutoShorts RSS Feed" href="/rss.xml" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "AutoShorts - 유튜브 쇼츠 자동 넘김",
+        "operatingSystem": "iOS, Android, Windows, macOS",
+        "applicationCategory": "UtilitiesApplication",
+        "description": "순정 YouTube 공식 어플에서 쇼츠 영상이 끝까지 재생되면 반복 재생되지 않고 자동으로 다음 쇼츠로 넘겨주는 유틸리티",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "KRW" },
+        "aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.9", "ratingCount": "148" }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "유튜브 공식 앱 자체에는 왜 쇼츠 자동 넘김 기능이 없나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "기본 유튜브 앱은 쇼츠 영상이 끝나면 같은 영상을 무한 반복 재생하도록 되어 있습니다. AutoShorts를 설치하면 영상이 100% 끝나는 시점을 감지해 반복 재생 대신 자동으로 다음 쇼츠로 스크롤해 줍니다."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "아이폰과 갤럭시 모두 순정 유튜브 어플에서 작동하나요?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "네! 아이폰은 순정 유튜브 앱 내부의 Auto-Advance 기능을 활성화한 YouTube-AutoShorts.ipa를 통해 작동하며, 갤럭시(안드로이드)는 접근성 연동 앱(YouTubeShortsAutoScroll.apk)을 통해 원래 깔려있는 순정 유튜브 앱에서 그대로 작동합니다."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card: #12141d;
+      --card-hover: #171a26;
+      --border: #232738;
+      --text: #f3f4f8;
+      --muted: #9aa1b9;
+      --yt-red: #ff0033;
+      --accent: #3ea6ff;
+      --green: #2ba640;
+      --amber: #ffb300;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at 50% 0%, #1a1228 0%, var(--bg) 55%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      line-height: 1.6;
+      padding-bottom: 90px;
+    }
+    a { color: var(--accent); text-decoration: none; }
+
+    /* 상단 네비게이션 */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 10, 15, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+    }
+    .nav-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .logo-icon {
+      width: 32px;
+      height: 23px;
+      background: var(--yt-red);
+      border-radius: 7px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #fff;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    .nav-links a {
+      color: #ccc;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: 0.15s;
+    }
+    .nav-links a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* 광고 슬롯 공통 디자인 (Google AdSense / Kakao AdFit / 제휴 배너) */
+    .ad-slot {
+      background: linear-gradient(135deg, #131622, #191d2e);
+      border: 1px solid #2b314d;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 22px 0;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .ad-slot:hover { border-color: #425080; }
+    .ad-badge {
+      display: inline-block;
+      background: var(--amber);
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.4px;
+      margin-bottom: 6px;
+    }
+    .ad-flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .ad-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+    .ad-desc {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .ad-cta {
+      background: var(--accent);
+      color: #000;
+      font-weight: 800;
+      font-size: 13.5px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    /* 히어로 섹션 */
+    .hero {
+      padding: 44px 0 32px;
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 36px;
+      align-items: center;
+    }
+    @media (max-width: 860px) {
+      .hero { grid-template-columns: 1fr; text-align: center; }
+      .hero-badges, .hero-stats { justify-content: center; }
+    }
+    .hero-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .pill {
+      background: rgba(255, 0, 51, 0.14);
+      border: 1px solid rgba(255, 0, 51, 0.4);
+      color: #ff6b88;
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 20px;
+    }
+    .pill.blue {
+      background: rgba(62, 166, 255, 0.14);
+      border-color: rgba(62, 166, 255, 0.4);
+      color: #70beff;
+    }
+    .hero h1 {
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.25;
+      letter-spacing: -0.8px;
+      margin-bottom: 14px;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, #ff4d6d, #ff9e00);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 16px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .stat-box {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .stat-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* 우측 미니 폰 프리뷰 */
+    .phone-preview-wrap {
+      display: flex;
+      justify-content: center;
+    }
+    .mini-phone {
+      width: 280px;
+      height: 490px;
+      background: #0f0f0f;
+      border-radius: 38px;
+      border: 8px solid #26293a;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.7);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .mini-top {
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      font-size: 14px;
+      z-index: 5;
+    }
+    .mini-screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(160deg, #1b1530, #0f2537);
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .mini-emoji {
+      font-size: 54px;
+      margin-bottom: 12px;
+    }
+    .mini-status-tag {
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #fff;
+      margin-top: 8px;
+    }
+    .mini-bottom {
+      position: relative;
+      z-index: 5;
+      background: rgba(15,15,15,0.92);
+    }
+    .mini-progress-track {
+      height: 4px;
+      background: rgba(255,255,255,0.2);
+      width: 100%;
+    }
+    .mini-progress-bar {
+      height: 100%;
+      width: 0%;
+      background: var(--yt-red);
+      transition: width 0.1s linear;
+    }
+    .mini-tabs {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      font-size: 11px;
+      color: #aaa;
+    }
+    .mini-tabs strong { color: #fff; }
+
+    /* 기기 선택 탭 버튼 */
+    .platform-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin: 28px 0 24px;
+    }
+    @media (max-width: 680px) {
+      .platform-selector { grid-template-columns: 1fr; }
+    }
+    .plat-tab {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 16px;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-align: left;
+      transition: 0.2s;
+    }
+    .plat-tab:hover { background: var(--card-hover); }
+    .plat-tab.active {
+      border-color: var(--accent);
+      background: rgba(62, 166, 255, 0.1);
+      box-shadow: 0 8px 28px rgba(62, 166, 255, 0.15);
+    }
+    .plat-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: #1e2233;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .plat-name { font-size: 16.5px; font-weight: 800; }
+    .plat-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+    /* 플랫폼 가이드 패널 */
+    .guide-panel { display: none; }
+    .guide-panel.active { display: block; }
+
+    /* 다운로드 액션 박스 */
+    .download-hero-card {
+      background: linear-gradient(135deg, #161926, #1d2236);
+      border: 1px solid #313a5a;
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .dl-info h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .dl-info p { font-size: 14px; color: var(--muted); max-width: 580px; }
+    .dl-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 280px;
+    }
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px 22px;
+      border-radius: 14px;
+      font-size: 15.5px;
+      font-weight: 800;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, filter 0.15s;
+      color: #fff;
+    }
+    .dl-btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .dl-btn.ios { background: var(--yt-red); }
+    .dl-btn.android { background: var(--green); }
+    .dl-btn.pc { background: var(--accent); color: #000; }
+    .dl-btn.sub {
+      background: #23283b;
+      color: #e0e4f0;
+      font-size: 13.5px;
+      padding: 11px 16px;
+      border: 1px solid #363e5a;
+    }
+
+    /* 초보자 완벽 따라하기 스텝 카드 */
+    .steps-title {
+      font-size: 22px;
+      font-weight: 800;
+      margin: 28px 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 22px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+    @media (max-width: 600px) {
+      .step-card { flex-direction: column; }
+    }
+    .step-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 900;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .step-body { flex: 1; }
+    .step-body h3 {
+      font-size: 17.5px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      color: #fff;
+    }
+    .step-body p {
+      font-size: 14.5px;
+      color: #c8cde0;
+      margin-bottom: 10px;
+    }
+    .tip-box {
+      background: rgba(255, 179, 0, 0.1);
+      border-left: 4px solid var(--amber);
+      padding: 12px 14px;
+      border-radius: 0 10px 10px 0;
+      font-size: 13.5px;
+      color: #ffe082;
+      margin-top: 8px;
+    }
+    .tip-box.green {
+      background: rgba(43, 166, 64, 0.12);
+      border-left-color: var(--green);
+      color: #a5d6a7;
+    }
+    .code-badge {
+      background: #090a0f;
+      border: 1px solid #2e344d;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 13px;
+      color: #70beff;
+    }
+
+    /* 다운로드 5초 스폰서 광고 모달 (핵심 고수익 슬롯) */
+    .dl-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.86);
+      backdrop-filter: blur(8px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .dl-modal.open { display: flex; }
+    .dl-modal-card {
+      background: #141722;
+      border: 1px solid #323a56;
+      border-radius: 22px;
+      max-width: 480px;
+      width: 100%;
+      padding: 26px;
+      text-align: center;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.8);
+    }
+    .dl-modal-title {
+      font-size: 19px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .dl-modal-sub {
+      font-size: 13.5px;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+    .modal-ad-box {
+      background: linear-gradient(135deg, #1b2033, #232a45);
+      border: 2px dashed #4a5785;
+      border-radius: 16px;
+      padding: 22px 18px;
+      margin-bottom: 18px;
+      text-align: left;
+    }
+    .countdown-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-size: 15px;
+      font-weight: 800;
+      background: #2b3147;
+      color: #aaa;
+      cursor: not-allowed;
+      transition: 0.2s;
+    }
+    .countdown-btn.ready {
+      background: var(--accent);
+      color: #000;
+      cursor: pointer;
+    }
+
+    /* 하단 고정 스티키 광고 배너 */
+    .sticky-bottom-ad {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(14, 16, 24, 0.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #2b314d;
+      padding: 10px 20px;
+      z-index: 90;
+    }
+    .sticky-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 13px;
+    }
+    .close-sticky {
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 네비게이션 -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <div class="logo">
+        <span class="logo-icon">▶</span>
+        <span>AutoShorts 공식 설치 센터</span>
+      </div>
+      <div class="nav-links">
+        <a href="#installSection">기종별 다운로드</a>
+        <a href="#guideSection">초보자 설치 가이드</a>
+        <a href="/simulator" target="_blank">웹 시뮬레이터 체험</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- [광고 슬롯 1] 상단 리더보드 배너 광고 -->
+    <a class="ad-slot" id="topAdSlot" href="https://www.coupang.com" target="_blank" rel="noopener" style="display:block;">
+      <span class="ad-badge">SPONSORED AD</span>
+      <div class="ad-flex">
+        <div>
+          <div class="ad-title" id="topAdTitle">침대에서 손 안 대고 유튜브 쇼츠 볼 때! 자바라 거치대 & 맥세이프 특가</div>
+          <div class="ad-desc" id="topAdDesc">AutoShorts와 함께 쓰면 손을 전혀 쓸 필요 없는 베스트셀러 거치대 모음</div>
+        </div>
+        <span class="ad-cta" id="topAdCta">특가 보러가기 →</span>
+      </div>
+    </a>
+
+    <!-- 히어로 섹션 -->
+    <section class="hero">
+      <div>
+        <div class="hero-badges">
+          <span class="pill">🔥 순정 YouTube 공식 어플 100% 그대로</span>
+          <span class="pill blue">아이폰 · 갤럭시 · PC 완벽 지원</span>
+        </div>
+        <h1>
+          유튜브 쇼츠,<br />
+          <span>영상이 끝나면 알아서 다음으로.</span>
+        </h1>
+        <p>
+          가짜 웹 플레이어가 아닙니다! 내 폰에 깔려 있는 <strong>진짜 YouTube 공식 어플</strong>에서
+          하단 <strong>[Shorts]</strong> 탭을 눌렀을 때, 영상이 끝까지 재생되면 반복 재생되지 않고
+          자동으로 다음 쇼츠로 넘겨줍니다.
+        </p>
+
+        <div class="hero-stats">
+          <div class="stat-box">
+            <span class="stat-num" id="statTotalDownloads">132+</span>
+            <span class="stat-label">누적 다운로드</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num" id="statViews">128+</span>
+            <span class="stat-label">오늘 방문자</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-num">100% 무료</span>
+            <span class="stat-label">설정에서 언제든 ON/OFF</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 우측 실시간 작동 프리뷰 -->
+      <div class="phone-preview-wrap">
+        <div class="mini-phone">
+          <div class="mini-top">
+            <span><span style="color:#ff0033;">▶</span> Shorts</span>
+            <span style="font-size:12px;color:#3ea6ff;">⚙️ 설정 ON</span>
+          </div>
+          <div class="mini-screen" id="miniScreen">
+            <div class="mini-emoji" id="miniEmoji">🍝</div>
+            <div style="font-weight:800;font-size:16px;" id="miniTitle">쇼츠 #1 재생 중</div>
+            <div class="mini-status-tag" id="miniTimer">진행률: 0%</div>
+          </div>
+          <div class="mini-bottom">
+            <div class="mini-progress-track">
+              <div class="mini-progress-bar" id="miniBar"></div>
+            </div>
+            <div class="mini-tabs">
+              <span>홈</span>
+              <strong>⚡ Shorts</strong>
+              <span>구독</span>
+              <span>내 페이지</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 기기 선택 탭 -->
+    <div id="installSection" class="platform-selector">
+      <button class="plat-tab active" data-target="panel-ios">
+        <div class="plat-icon">🍎</div>
+        <div>
+          <div class="plat-name">아이폰 (iOS)</div>
+          <div class="plat-desc">자동 넘김 내장 순정 YouTube.ipa</div>
+        </div>
+      </button>
+
+      <button class="plat-tab" data-target="panel-android">
+        <div class="plat-icon">🤖</div>
+        <div>
+          <div class="plat-name">갤럭시 (안드로이드)</div>
+          <div class="plat-desc">순정 YouTube 공식 앱 연동 APK</div>
+        </div>
+      </button>
+
+      <button class="plat-tab" data-target="panel-pc">
+        <div class="plat-icon">💻</div>
+        <div>
+          <div class="plat-name">PC (크롬·웨일·엣지)</div>
+          <div class="plat-desc">브라우저 확장 프로그램 & 스크립트</div>
+        </div>
+      </button>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 1. 아이폰 (iOS) 다운로드 & 초보자 완벽 가이드 패널 -->
+    <!-- ===================================================================== -->
+    <div id="panel-ios" class="guide-panel active">
+      <div class="download-hero-card">
+        <div class="dl-info">
+          <h2>🍎 아이폰용 진짜 YouTube 자동 넘김 설치 파일</h2>
+          <p>
+            순정 YouTube 아이폰 공식 앱(v21.41.5) 내부의 <strong>Auto-Advance 엔진과 루프 방지 모듈</strong>을
+            하나로 합쳐 둔 완성본 파일입니다. 복잡한 모듈 주입 설정 없이 <strong>Sideloadly</strong>에 넣고 <strong>Start</strong>만 누르면 됩니다!
+          </p>
+        </div>
+        <div class="dl-buttons">
+          <button class="dl-btn ios" onclick="openDownloadModal('/download/YouTube-AutoShorts.ipa', 'YouTube-AutoShorts.ipa (아이폰 순정 유튜브 자동 넘김 완성본)')">
+            📥 1. YouTube-AutoShorts.ipa 다운로드
+          </button>
+          <a class="dl-btn sub" href="https://sideloadly.io/SideloadlySetup.dmg" target="_blank">
+            💻 2. Sideloadly 설치 파일 받기 (Mac용)
+          </a>
+          <a class="dl-btn sub" href="https://sideloadly.io/SideloadlySetup64.exe" target="_blank">
+            🪟 Sideloadly 설치 파일 받기 (Windows 64비트용)
+          </a>
+        </div>
+      </div>
+
+      <h3 id="guideSection" class="steps-title">📖 초보자도 3분 만에 끝내는 아이폰 설치 순서 (차근차근 따라하세요)</h3>
+      <div class="step-list">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>Sideloadly 실행 후 아이폰을 컴퓨터에 케이블로 연결하기</h3>
+            <p>
+              위에서 받은 <strong>Sideloadly</strong>를 실행하고 아이폰을 케이블로 연결합니다.
+              아이폰 화면에 <em>"이 컴퓨터를 신뢰하시겠습니까?"</em> 창이 뜨면 <strong>[신뢰]</strong>를 누르고 아이폰 잠금 비밀번호를 입력해 주세요.
+            </p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>YouTube-AutoShorts.ipa 파일을 Sideloadly에 끌어다 놓기</h3>
+            <p>
+              위 1번 버튼으로 다운받은 <span class="code-badge">YouTube-AutoShorts.ipa</span> 파일을
+              Sideloadly 창 왼쪽의 <strong>[IPA]</strong> 아이콘 위로 마우스로 끌어다 놓습니다(드래그 앤 드롭).
+            </p>
+            <div class="tip-box green">
+              ✅ <strong>Advanced Options는 건드릴 필요가 없습니다!</strong> 이미 자동 넘김 기능과 기존 유튜브 앱 충돌 방지 처리가 파일 안에 모두 완료되어 있습니다.
+            </div>
+          </div>
+        </div>
+
+        <!-- [광고 슬롯 2] 가이드 본문 중간 인피드 광고 -->
+        <a class="ad-slot" href="https://www.coupang.com" target="_blank" rel="noopener" style="display:block;">
+          <span class="ad-badge">RECOMMENDED</span>
+          <div class="ad-flex">
+            <div>
+              <div class="ad-title">아이폰 고속 충전 C타입 케이블 & 정품 인증 어댑터 할인</div>
+              <div class="ad-desc">PC 연결 및 초고속 충전을 위한 MFi 인증 케이블 베스트셀러</div>
+            </div>
+            <span class="ad-cta">최저가 보기 →</span>
+          </div>
+        </a>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>Apple ID 입력 후 [Start] 누르기 (주의사항 필독!)</h3>
+            <p>
+              <span class="code-badge">Apple ID:</span> 칸에 본인이 앱스토어에서 쓰는 <strong>개인 애플 계정 이메일</strong>을 입력하고 아래 <strong>[Start]</strong> 버튼을 누른 뒤, 애플 계정 비밀번호와 6자리 인증번호를 입력합니다.
+            </p>
+            <div class="tip-box">
+              ⚠️ <strong>자주 겪는 오류 2가지 해결법:</strong><br />
+              1) <strong>Login failed (-22406)</strong>: 비밀번호 입력 시 키보드가 한글(가)로 되어 있지 않은지 확인하세요. 메모장에 비밀번호를 먼저 적어 복사(<span class="code-badge">⌘+C</span>) 후 붙여넣기(<span class="code-badge">⌘+V</span>) 하면 오타 없이 통과됩니다.<br />
+              2) <strong>No phone number info (관리형 계정 오류)</strong>: 회사나 학교에서 발급한 이메일 계정은 사용할 수 없습니다. 반드시 일반 개인 이메일 계정(<span class="code-badge">@gmail.com</span>, <span class="code-badge">@icloud.com</span> 등)을 입력해 주세요.
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h3>(최초 1회) License Agreement 약관 동의 안내가 뜰 경우</h3>
+            <p>
+              처음 설치할 때 <em>"Please accept newer License Agreement at developer.apple.com/account"</em> 창이 뜨면,
+              아래 링크를 눌러 애플 사이트에 로그인한 뒤 <strong>체크박스(☑)를 체크하고 [I Agree / Submit]</strong>만 누르면 됩니다! 그 후 다시 Sideloadly에서 <strong>[Start]</strong>를 누르세요.
+            </p>
+            <p>
+              👉 <a href="https://developer.apple.com/account/" target="_blank" style="font-weight:800;text-decoration:underline;">애플 약관 동의 페이지 바로 열기 (developer.apple.com/account)</a>
+            </p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h3>아이폰에서 [신뢰] 및 [개발자 모드] 켜고 진짜 유튜브 쇼츠 즐기기!</h3>
+            <p>
+              설치가 <span class="code-badge">Done!</span>으로 끝나면 아이폰 바탕화면에 <strong>YouTube</strong> 앱이 생성됩니다. 처음 실행하기 전에 아래 두 가지만 켜주세요:
+            </p>
+            <p>
+              ① 아이폰 <strong>[설정 > 일반 > VPN 및 기기 관리]</strong> → 내 이메일 터치 → <strong>[신뢰]</strong> 터치<br />
+              ② 아이폰 <strong>[설정 > 개인정보 보호 및 보안]</strong> → 맨 아래로 내려서 <strong>[개발자 모드]</strong> 켜기 (재부팅 후 '켜기' 선택)
+            </p>
+            <div class="tip-box green">
+              🎉 <strong>완료!</strong> 이제 유튜브 앱을 켜고 하단 <strong>[Shorts]</strong> 탭을 누르면 영상이 끝날 때 자동으로 다음 쇼츠로 넘어갑니다! 켜고 끄는 것은 <strong>쇼츠 우측 상단 점 3개(⋮) 메뉴</strong> 또는 <strong>유튜브 설정 화면 우측 상단 [쇼츠 자동넘김]</strong> 버튼에서 언제든 조절할 수 있습니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 2. 갤럭시 (안드로이드) 다운로드 & 초보자 완벽 가이드 패널 -->
+    <!-- ===================================================================== -->
+    <div id="panel-android" class="guide-panel">
+      <div class="download-hero-card">
+        <div class="dl-info">
+          <h2>🤖 갤럭시 / 안드로이드 순정 YouTube 연동 APK</h2>
+          <p>
+            내 폰에 원래 깔려 있는 <strong>진짜 YouTube 공식 어플</strong>을 그대로 쓰면서,
+            하단 <strong>[Shorts]</strong> 탭을 볼 때만 영상이 끝나면 자동으로 다음 쇼츠로 스와이프해 주는 초경량 연동 앱입니다.
+          </p>
+        </div>
+        <div class="dl-buttons">
+          <button class="dl-btn android" onclick="openDownloadModal('/download/YouTubeShortsAutoScroll.apk', 'YouTubeShortsAutoScroll.apk (갤럭시 순정 유튜브 연동 앱)')">
+            📥 YouTubeShortsAutoScroll.apk 다운로드
+          </button>
+        </div>
+      </div>
+
+      <h3 class="steps-title">📖 갤럭시 초보자 1분 설치 가이드</h3>
+      <div class="step-list">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>APK 파일 다운로드 및 설치</h3>
+            <p>
+              위 초록색 버튼을 눌러 <span class="code-badge">YouTubeShortsAutoScroll.apk</span> 파일을 다운받아 설치합니다.
+              <em>"출처를 알 수 없는 앱"</em> 안내가 뜨면 <strong>[이 출처 허용]</strong> 또는 <strong>[무시하고 설치]</strong>를 눌러주세요.
+            </p>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>(갤럭시 안드로이드 13~15 필수!) '제한된 설정 허용' 켜주기</h3>
+            <p>
+              최신 갤럭시에서는 스토어 외부에서 받은 앱의 접근성 스위치를 켜기 전에 아래 허용을 한 번 눌러주어야 스위치가 활성화됩니다:
+            </p>
+            <div class="tip-box">
+              💡 휴대폰 <strong>[설정 > 애플리케이션 > YouTube 쇼츠 자동 넘김 설정]</strong>으로 이동 → 화면 <strong>우측 상단 점 3개(⋮)</strong> 터치 → <strong>[제한된 설정 허용]</strong> 터치!
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>접근성 연동 켜고 진짜 YouTube 공식 어플 실행하기</h3>
+            <p>
+              이제 <strong>YouTube 쇼츠 자동 넘김 설정</strong> 앱을 열고 <strong>[1단계: 접근성에서 YouTube 쇼츠 자동 넘김 연동 켜기]</strong>를 눌러 스위치를 켭니다.
+              그다음 빨간색 <strong>[▶ 진짜 YouTube 공식 어플 바로 열기]</strong> 버튼을 눌러 하단 <strong>[Shorts]</strong> 탭을 누르면 영상이 끝날 때 자동으로 넘어갑니다!
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 3. PC 크롬 / 웨일 / 엣지 확장 프로그램 패널 -->
+    <!-- ===================================================================== -->
+    <div id="panel-pc" class="guide-panel">
+      <div class="download-hero-card">
+        <div class="dl-info">
+          <h2>💻 PC 브라우저 (크롬 · 웨일 · 엣지) 자동 넘김 확장 프로그램</h2>
+          <p>
+            PC에서 유튜브 쇼츠(<span class="code-badge">youtube.com/shorts</span>)를 볼 때 영상이 끝까지 재생되면 반복 재생되지 않고 자동으로 다음 쇼츠로 넘겨줍니다.
+          </p>
+        </div>
+        <div class="dl-buttons">
+          <button class="dl-btn pc" onclick="openDownloadModal('/download/YouTubeAutoShorts-ChromeExtension.zip', 'YouTubeAutoShorts-ChromeExtension.zip (PC 크롬/웨일/엣지 확장 프로그램)')">
+            📥 PC 확장 프로그램 ZIP 다운로드
+          </button>
+          <button class="dl-btn sub" onclick="openDownloadModal('/download/YouTubeAutoShorts.user.js', 'YouTubeAutoShorts.user.js (Tampermonkey / Stay 유저스크립트)')">
+            ⚡ 유저스크립트 (.user.js) 다운로드
+          </button>
+        </div>
+      </div>
+
+      <h3 class="steps-title">📖 PC 크롬/웨일/엣지 30초 설치 방법</h3>
+      <div class="step-list">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h3>다운받은 ZIP 파일 압축 풀기</h3>
+            <p>위 버튼으로 다운받은 <span class="code-badge">YouTubeAutoShorts-ChromeExtension.zip</span> 파일의 압축을 새 폴더에 풀어줍니다.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h3>확장 프로그램 관리 페이지에서 [개발자 모드] 켜기</h3>
+            <p>브라우저 주소창에 <span class="code-badge">chrome://extensions</span> (웨일은 <span class="code-badge">whale://extensions</span>)를 입력해 이동한 뒤, 우측 상단의 <strong>[개발자 모드]</strong> 스위치를 켭니다.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h3>[압축해제된 확장 프로그램을 로드합니다] 클릭</h3>
+            <p>좌측 상단에 나타난 <strong>[압축해제된 확장 프로그램을 로드합니다]</strong> 버튼을 누르고 1번에서 압축을 푼 폴더를 선택하면 즉시 적용됩니다!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================== -->
+    <!-- 검색 유입 & 자주 묻는 질문 (SEO FAQ 섹션) -->
+    <!-- ===================================================================== -->
+    <section id="faqSection" style="margin-top:44px;padding-top:28px;border-top:1px solid var(--border);">
+      <h2 class="steps-title">💡 자주 묻는 질문 (유튜브 쇼츠 자동 넘김 Q&A)</h2>
+      <div class="step-list">
+        <div class="step-card">
+          <div class="step-body">
+            <h3>Q. 왜 유튜브 공식 어플에는 쇼츠 자동 넘김(반복재생 끄기) 설정이 없나요?</h3>
+            <p>
+              유튜브 앱은 기본적으로 쇼츠(Shorts) 영상이 끝나면 같은 영상을 무한 반복 재생(Loop)하도록 설계되어 있습니다.
+              <strong>AutoShorts</strong>는 순정 유튜브 공식 앱의 재생 종료 시점(100% 도달 시점)을 감지하여 반복 재생 대신 다음 쇼츠로 자동 스크롤해 줍니다.
+            </p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-body">
+            <h3>Q. 댓글을 읽고 있을 때도 영상이 끝나면 넘어가 버리나요?</h3>
+            <p>
+              아닙니다! 댓글창이나 설명창(Engagement Panel)을 열어둔 동안에는 영상이 끝나도 넘어가지 않고 자동으로 일시정지 상태로 기다려 주며, 댓글창을 닫으면 다시 자동 넘김이 작동합니다.
+            </p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-body">
+            <h3>Q. 자동 넘김 기능을 잠시 끄고 싶을 때는 어떻게 하나요?</h3>
+            <p>
+              화면을 가리는 플로팅 버튼 없이, 아이폰은 <strong>쇼츠 우측 상단 점 3개(⋮) 메뉴</strong> 또는 <strong>유튜브 설정 우측 상단 [쇼츠 자동넘김]</strong>에서, 갤럭시는 <strong>YouTube 쇼츠 자동 넘김 설정 앱</strong>에서 언제든 스위치 하나로 켜고 끌 수 있습니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- [광고 슬롯 3] 다운로드 5초 스폰서 광고 모달 (핵심 고수익 장치) -->
+  <div class="dl-modal" id="downloadModal">
+    <div class="dl-modal-card">
+      <div class="dl-modal-title" id="modalFileName">파일 다운로드 준비 중...</div>
+      <div class="dl-modal-sub">스폰서 광고 덕분에 모든 업데이트와 서버가 100% 무료로 제공됩니다.</div>
+
+      <div class="modal-ad-box" id="modalAdContainer">
+        <span class="ad-badge">SPONSORED AD</span>
+        <div style="font-size:16px;font-weight:800;color:#fff;margin:6px 0;" id="modalAdTitle">
+          침대/책상용 스마트폰 자바라 거치대 & 맥세이프 충전기 초특가
+        </div>
+        <div style="font-size:13px;color:#b0b8d0;margin-bottom:14px;" id="modalAdDesc">
+          유튜브 쇼츠 자동 넘김과 함께 쓰면 손가락 하나 까딱 안 하고 편하게 감상 가능!
+        </div>
+        <a id="modalAdLink" href="https://www.coupang.com" target="_blank" rel="noopener" class="ad-cta" style="display:inline-block;">
+          스폰서 특가 상품 보기 →
+        </a>
+      </div>
+
+      <button class="countdown-btn" id="modalDownloadBtn" disabled>
+        5초 후 다운로드가 시작됩니다...
+      </button>
+      <div style="margin-top:10px;">
+        <button onclick="closeDownloadModal()" style="background:none;border:none;color:#777;font-size:12.5px;cursor:pointer;">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- [광고 슬롯 4] 하단 고정 스티키 배너 광고 -->
+  <div class="sticky-bottom-ad" id="stickyBottomAd">
+    <div class="sticky-inner">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span class="ad-badge" style="margin:0;">AD</span>
+        <a href="https://www.coupang.com" target="_blank" rel="noopener" style="color:#fff;font-weight:600;">
+          🎁 유튜브 쇼츠 감상 필수템! 침대용 자바라 거치대 로켓배송 특가 확인하기 →
+        </a>
+      </div>
+      <button class="close-sticky" onclick="document.getElementById('stickyBottomAd').style.display='none'">✕</button>
+    </div>
+  </div>
+
+  <script>
+    // 1. 접속 기기 자동 감지하여 탭 활성화
+    const ua = navigator.userAgent || "";
+    const tabs = document.querySelectorAll(".plat-tab");
+    const panels = document.querySelectorAll(".guide-panel");
+
+    function activateTab(targetId) {
+      tabs.forEach((t) => t.classList.toggle("active", t.dataset.target === targetId));
+      panels.forEach((p) => p.classList.toggle("active", p.id === targetId));
+    }
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => activateTab(tab.dataset.target));
+    });
+
+    if (/android/i.test(ua)) {
+      activateTab("panel-android");
+    } else if (/iphone|ipad|ipod/i.test(ua)) {
+      activateTab("panel-ios");
+    }
+
+    // 2. 우측 미니 폰 프리뷰 애니메이션
+    const PREVIEW_ITEMS = [
+      { emoji: "🍝", title: "쇼츠 #1: 3분 마늘 파스타", bg: "linear-gradient(160deg, #1b1530, #0f2537)" },
+      { emoji: "🐶", title: "쇼츠 #2: 강아지 산책 반응", bg: "linear-gradient(160deg, #1f2b1d, #112233)" },
+      { emoji: "🎹", title: "쇼츠 #3: 밤 감성 피아노", bg: "linear-gradient(160deg, #2b1825, #151932)" }
+    ];
+    let pIdx = 0;
+    let pPct = 0;
+    setInterval(() => {
+      pPct += 4;
+      const bar = document.getElementById("miniBar");
+      const timer = document.getElementById("miniTimer");
+      if (bar) bar.style.width = Math.min(pPct, 100) + "%";
+      if (timer) {
+        timer.textContent = pPct >= 98 ? "✅ 100% 종료 감지 → 다음 쇼츠 이동!" : `재생 진행률: ${pPct}%`;
+      }
+      if (pPct >= 100) {
+        pPct = 0;
+        pIdx = (pIdx + 1) % PREVIEW_ITEMS.length;
+        const item = PREVIEW_ITEMS[pIdx];
+        document.getElementById("miniEmoji").textContent = item.emoji;
+        document.getElementById("miniTitle").textContent = item.title;
+        document.getElementById("miniScreen").style.background = item.bg;
+      }
+    }, 150);
+
+    // 3. 서버 통계 & 애드센스/스폰서 광고 설정 로드
+    fetch("/api/bootstrap")
+      .then((r) => r.json())
+      .then(({ stats, adConfig }) => {
+        if (stats) {
+          const totalDl = Object.values(stats.downloads || {}).reduce((a, b) => a + b, 0);
+          document.getElementById("statTotalDownloads").textContent = totalDl.toLocaleString() + "+";
+          document.getElementById("statViews").textContent = (stats.views || 128).toLocaleString() + "+";
+        }
+        if (adConfig && adConfig.sponsorBanner && adConfig.sponsorBanner.enabled) {
+          const sb = adConfig.sponsorBanner;
+          document.getElementById("topAdTitle").textContent = sb.title;
+          document.getElementById("topAdDesc").textContent = sb.subtitle;
+          document.getElementById("topAdCta").textContent = sb.ctaText;
+          document.getElementById("topAdSlot").href = sb.linkUrl;
+          document.getElementById("modalAdTitle").textContent = sb.title;
+          document.getElementById("modalAdDesc").textContent = sb.subtitle;
+          document.getElementById("modalAdLink").href = sb.linkUrl;
+        }
+        // 구글 애드센스 클라이언트 ID가 설정된 경우 자동으로 스크립트 주입
+        if (adConfig && adConfig.adsenseClientId) {
+          const s = document.createElement("script");
+          s.async = true;
+          s.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adConfig.adsenseClientId}`;
+          s.crossOrigin = "anonymous";
+          document.head.appendChild(s);
+        }
+      })
+      .catch(() => {});
+
+    // 4. 다운로드 5초 스폰서 광고 모달 제어
+    let currentDownloadUrl = "";
+    let countdownTimer = null;
+
+    function openDownloadModal(url, label) {
+      currentDownloadUrl = url;
+      document.getElementById("modalFileName").textContent = label;
+      const btn = document.getElementById("modalDownloadBtn");
+      btn.disabled = true;
+      btn.classList.remove("ready");
+
+      document.getElementById("downloadModal").classList.add("open");
+      fetch("/api/ad-impression", { method: "POST" }).catch(() => {});
+
+      let left = 5;
+      btn.textContent = `${left}초 후 다운로드 버튼이 활성화됩니다...`;
+      if (countdownTimer) clearInterval(countdownTimer);
+
+      countdownTimer = setInterval(() => {
+        left -= 1;
+        if (left > 0) {
+          btn.textContent = `${left}초 후 다운로드 버튼이 활성화됩니다...`;
+        } else {
+          clearInterval(countdownTimer);
+          btn.disabled = false;
+          btn.classList.add("ready");
+          btn.textContent = "📥 지금 바로 파일 다운로드 시작하기";
+          // 자동으로 다운로드 트리거
+          triggerActualDownload(currentDownloadUrl);
+        }
+      }, 1000);
+
+      btn.onclick = () => {
+        if (!btn.disabled) {
+          triggerActualDownload(currentDownloadUrl);
+          closeDownloadModal();
+        }
+      };
+    }
+
+    function triggerActualDownload(url) {
+      let finalUrl = url;
+      if (location.hostname.endsWith("github.io") && url.startsWith("/download/")) {
+        const fileName = url.replace("/download/", "");
+        finalUrl = `https://github.com/justinnn980/youtube-shorts-autoscroll/releases/download/v1.0.0/${fileName}`;
+      }
+      const a = document.createElement("a");
+      a.href = finalUrl;
+      a.setAttribute("download", "");
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
+
+    function closeDownloadModal() {
+      if (countdownTimer) clearInterval(countdownTimer);
+      document.getElementById("downloadModal").classList.remove("open");
+    }
+  </script>
+</body>
+</html>

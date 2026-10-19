@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="AutoShorts" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <title>AutoShorts - 유튜브 쇼츠 자동 넘김</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: #0f0f0f;
+      color: #f1f1f1;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Pretendard", "Roboto", sans-serif;
+      overflow: hidden;
+    }
+
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      max-width: 480px;
+      margin: 0 auto;
+      background: #000;
+      position: relative;
+    }
+
+    /* 메인 뷰 영역 */
+    .main-stage {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* 실제 유튜브 플레이어 컨테이너 */
+    #ytPlayerContainer {
+      width: 100%;
+      height: 100%;
+      position: relative;
+    }
+    #ytPlayerContainer iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* 상단 순정 스타일 헤더 (화면 가리는 플로팅 토글 없음, 우측은 다음/이전 이동 보조만) */
+    .top-bar {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      right: 16px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .brand-pill {
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: auto;
+    }
+    .nav-arrows {
+      display: flex;
+      gap: 8px;
+      pointer-events: auto;
+    }
+    .circle-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 설정(Settings) 화면 */
+    .settings-view {
+      position: absolute;
+      inset: 0;
+      background: #0f0f0f;
+      z-index: 30;
+      display: none;
+      flex-direction: column;
+      padding: 22px 18px;
+      overflow-y: auto;
+    }
+    .settings-view.active {
+      display: flex;
+    }
+    .settings-header {
+      font-size: 21px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .settings-sub {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+    .section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3ea6ff;
+      letter-spacing: 0.4px;
+      margin: 14px 0 8px;
+    }
+    .card {
+      background: #1a1a1a;
+      border: 1px solid #282828;
+      border-radius: 14px;
+      padding: 6px 16px;
+      margin-bottom: 14px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 12px;
+    }
+    .row + .row {
+      border-top: 1px solid #282828;
+    }
+    .row-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .row-desc {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.35;
+    }
+
+    /* 스위치 */
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background-color: #3f3f3f; transition: 0.2s; border-radius: 26px;
+    }
+    .slider::before {
+      position: absolute; content: ""; height: 20px; width: 20px;
+      left: 3px; bottom: 3px; background-color: #fff; transition: 0.2s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #3ea6ff; }
+    input:checked + .slider::before { transform: translateX(22px); }
+
+    /* 리워드 광고 충전 카드 (핵심 수익 모델) */
+    .reward-card {
+      background: linear-gradient(135deg, #162235, #1b2c46);
+      border: 1px solid #2b456b;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .reward-status {
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #64b5f6;
+      margin-bottom: 10px;
+    }
+    .reward-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #3ea6ff;
+      color: #000;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* 커스텀 쇼츠 URL/ID 추가 입력창 */
+    .input-row {
+      display: flex;
+      gap: 8px;
+      padding: 10px 0;
+    }
+    .input-row input {
+      flex: 1;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: #fff;
+      font-size: 13px;
+    }
+    .input-row button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* 하단 탭바 */
+    .bottom-tabs {
+      height: 52px;
+      background: #141414;
+      border-top: 1px solid #242424;
+      display: flex;
+      z-index: 40;
+    }
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: #888;
+      font-size: 13.5px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tab-btn.active {
+      color: #fff;
+      font-weight: 800;
+    }
+
+    /* 하단 고정 배너 광고 영역 (AdMob / AdSense) */
+    .ad-banner-slot {
+      height: 50px;
+      background: #0a0a0d;
+      border-top: 1px solid #1e1e26;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #999;
+      z-index: 40;
+    }
+    .ad-tag {
+      background: #ffcc00;
+      color: #000;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 4px;
+    }
+
+    /* 리워드 광고 재생 모달 */
+    .ad-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .ad-modal.open {
+      display: flex;
+    }
+    .ad-modal-box {
+      background: #181820;
+      border: 1px solid #333;
+      border-radius: 18px;
+      padding: 28px 22px;
+      max-width: 340px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <div class="main-stage">
+      <!-- 상단 바 -->
+      <div class="top-bar">
+        <div class="brand-pill">
+          <span style="color:#ff0033;">▶</span> Shorts
+        </div>
+        <div class="nav-arrows">
+          <button class="circle-btn" id="prevShortBtn" title="이전 쇼츠">▲</button>
+          <button class="circle-btn" id="nextShortBtn" title="다음 쇼츠">▼</button>
+        </div>
+      </div>
+
+      <!-- 실제 유튜브 공식 플레이어 -->
+      <div id="ytPlayerContainer">
+        <div id="ytPlayer"></div>
+      </div>
+
+      <!-- 설정(Settings) 전용 화면 -->
+      <div class="settings-view" id="settingsView">
+        <div class="settings-header">⚙️ 설정 (Settings)</div>
+        <div class="settings-sub">
+          영상이 끝까지(100%) 재생되면 반복 재생되지 않고 자동으로 다음 쇼츠로 넘어갑니다.
+        </div>
+
+        <div class="section-title">쇼츠 자동 넘김 설정</div>
+        <div class="card">
+          <div class="row">
+            <div>
+              <div class="row-title">쇼츠 자동 넘김 (반복 재생 방지)</div>
+              <div class="row-desc">현재 영상 재생이 끝나면 즉시 다음 쇼츠로 자동 이동합니다.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggleAutoScroll" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="row">
+            <div>
+              <div class="row-title">영상이 안 넘어갈 때 자동 건너뛰기</div>
+              <div class="row-desc">재생 불가/오류 영상 발생 시 1초 후 다음 쇼츠로 자동 스킵합니다.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggleAutoSkipError" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="section-title">무료 이용권 충전소 (리워드 광고 수익 모델)</div>
+        <div class="reward-card">
+          <div class="reward-status" id="rewardHoursText">⚡ 자동 넘김 무료 이용권: 24시간 남음</div>
+          <button class="reward-btn" id="watchRewardAdBtn">
+            🎬 광고 1편 보고 +24시간 무료 충전하기
+          </button>
+        </div>
+
+        <div class="section-title">쇼츠 영상 주소 추가 (선택)</div>
+        <div class="card">
+          <div class="input-row">
+            <input type="text" id="customUrlInput" placeholder="유튜브 쇼츠 링크 또는 영상 ID 붙여넣기" />
+            <button id="addVideoBtn">추가</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 탭바 -->
+    <div class="bottom-tabs">
+      <button class="tab-btn active" id="tabPlayBtn">▶ Shorts 보기</button>
+      <button class="tab-btn" id="tabSettingBtn">⚙️ 설정 (ON/OFF)</button>
+    </div>
+
+    <!-- 하단 고정 AdMob / AdSense 배너 광고 영역 -->
+    <div class="ad-banner-slot">
+      <span class="ad-tag">AD</span>
+      <span>Google AdMob / AdSense 하단 배너 광고 슬롯 (상시 수익)</span>
+    </div>
+  </div>
+
+  <!-- 리워드 광고 시연 모달 -->
+  <div class="ad-modal" id="rewardAdModal">
+    <div class="ad-modal-box">
+      <div style="font-size:36px;margin-bottom:10px;">🎬</div>
+      <div style="font-size:17px;font-weight:800;margin-bottom:6px;">보상형 리워드 광고 재생 중</div>
+      <div style="font-size:13px;color:#aaa;margin-bottom:16px;" id="adCountdownText">3초 후 +24시간 무료 이용권이 지급됩니다...</div>
+    </div>
+  </div>
+
+  <!-- 공식 YouTube IFrame Player API 로드 -->
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    // 실제 인기 유튜브 쇼츠/단편 영상 ID 큐 (끝까지 재생되면 다음 영상으로 자동 전환)
+    const SHORTS_QUEUE = [
+      "jNQXAC9IVRw", // Me at the zoo (19초 단편 - 빠른 종료 테스트에 최적!)
+      "M7lc1UVf-VE",
+      "aqz-KE-bpKQ",
+      "ysz5S6PUM-U"
+    ];
+
+    let currentIdx = 0;
+    let player = null;
+    let remainHours = 24;
+
+    const toggleAutoScroll = document.getElementById("toggleAutoScroll");
+    const toggleAutoSkipError = document.getElementById("toggleAutoSkipError");
+    const settingsView = document.getElementById("settingsView");
+    const tabPlayBtn = document.getElementById("tabPlayBtn");
+    const tabSettingBtn = document.getElementById("tabSettingBtn");
+
+    // 저장된 설정 복원
+    if (localStorage.getItem("autoshorts_enabled") !== null) {
+      toggleAutoScroll.checked = localStorage.getItem("autoshorts_enabled") === "true";
+    }
+    toggleAutoScroll.addEventListener("change", () => {
+      localStorage.setItem("autoshorts_enabled", String(toggleAutoScroll.checked));
+    });
+
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player("ytPlayer", {
+        videoId: SHORTS_QUEUE[currentIdx],
+        playerVars: {
+          autoplay: 1,
+          playsinline: 1,
+          controls: 1,
+          rel: 0,
+          modestbranding: 1,
+          loop: 0 // 반복 재생 해제!
+        },
+        events: {
+          onReady: (e) => {
+            e.target.playVideo();
+          },
+          onStateChange: (e) => {
+            // 영상이 끝까지 재생 완료된 순간 (YT.PlayerState.ENDED === 0)
+            if (e.data === YT.PlayerState.ENDED) {
+              if (toggleAutoScroll.checked) {
+                playNextShort();
+              } else {
+                // 설정이 꺼져 있으면 순정 유튜브처럼 처음부터 다시 반복 재생
+                player.seekTo(0);
+                player.playVideo();
+              }
+            }
+          },
+          onError: () => {
+            if (toggleAutoSkipError.checked) {
+              setTimeout(playNextShort, 800);
+            }
+          }
+        }
+      });
+    }
+
+    function playNextShort() {
+      currentIdx = (currentIdx + 1) % SHORTS_QUEUE.length;
+      if (player && player.loadVideoById) {
+        player.loadVideoById(SHORTS_QUEUE[currentIdx]);
+      }
+    }
+
+    function playPrevShort() {
+      currentIdx = (currentIdx - 1 + SHORTS_QUEUE.length) % SHORTS_QUEUE.length;
+      if (player && player.loadVideoById) {
+        player.loadVideoById(SHORTS_QUEUE[currentIdx]);
+      }
+    }
+
+    document.getElementById("nextShortBtn").addEventListener("click", playNextShort);
+    document.getElementById("prevShortBtn").addEventListener("click", playPrevShort);
+
+    // 탭 전환
+    tabPlayBtn.addEventListener("click", () => {
+      settingsView.classList.remove("active");
+      tabPlayBtn.classList.add("active");
+      tabSettingBtn.classList.remove("active");
+    });
+
+    tabSettingBtn.addEventListener("click", () => {
+      settingsView.classList.add("active");
+      tabSettingBtn.classList.add("active");
+      tabPlayBtn.classList.remove("active");
+    });
+
+    // 리워드 광고 충전 시연
+    document.getElementById("watchRewardAdBtn").addEventListener("click", () => {
+      const modal = document.getElementById("rewardAdModal");
+      const countText = document.getElementById("adCountdownText");
+      modal.classList.add("open");
+      let sec = 3;
+      countText.textContent = `${sec}초 후 +24시간 무료 이용권이 지급됩니다...`;
+      const timer = setInterval(() => {
+        sec -= 1;
+        if (sec > 0) {
+          countText.textContent = `${sec}초 후 +24시간 무료 이용권이 지급됩니다...`;
+        } else {
+          clearInterval(timer);
+          modal.classList.remove("open");
+          remainHours += 24;
+          document.getElementById("rewardHoursText").textContent =
+            `⚡ 자동 넘김 무료 이용권: ${remainHours}시간 남음`;
+        }
+      }, 1000);
+    });
+
+    // 커스텀 쇼츠 링크 추가
+    document.getElementById("addVideoBtn").addEventListener("click", () => {
+      const val = document.getElementById("customUrlInput").value.trim();
+      if (!val) return;
+      const match = val.match(/(?:shorts\/|v=|youtu\.be\/)([A-Za-z0-9_-]{11})/) || val.match(/^([A-Za-z0-9_-]{11})$/);
+      if (match) {
+        const vid = match[1];
+        SHORTS_QUEUE.splice(currentIdx + 1, 0, vid);
+        document.getElementById("customUrlInput").value = "";
+        settingsView.classList.remove("active");
+        tabPlayBtn.classList.add("active");
+        tabSettingBtn.classList.remove("active");
+        playNextShort();
+      }
+    });
+  </script>
+</body>
+</html>
+

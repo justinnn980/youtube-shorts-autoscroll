@@ -1,0 +1,10 @@
+{
+  "name": "AutoShorts - 유튜브 쇼츠 자동 넘김",
+  "short_name": "AutoShorts",
+  "start_url": "/app.html",
+  "display": "standalone",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "description": "유튜브 쇼츠 영상이 끝까지 재생되면 반복 재생되지 않고 자동으로 다음 쇼츠로 넘어갑니다."
+}
+

@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Shorts 자동 넘김 - iOS & Android 순정 앱 연동 시뮬레이터</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+    body {
+      background: #08080a;
+      color: #f1f1f1;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Pretendard", "Roboto", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      gap: 36px;
+      flex-wrap: wrap;
+    }
+
+    /* 스마트폰 프레임 (순정 유튜브 앱 100% 재현) */
+    .phone-frame {
+      width: 375px;
+      height: 790px;
+      background: #0f0f0f;
+      border-radius: 48px;
+      border: 10px solid #222227;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255,255,255,0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* 상단 노치 / 다이내믹 아일랜드 */
+    .status-bar {
+      height: 44px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 30;
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      pointer-events: none;
+    }
+    .dynamic-island {
+      width: 104px;
+      height: 26px;
+      background: #000;
+      border-radius: 20px;
+      margin: 0 auto;
+    }
+
+    /* 쇼츠 뷰포트 */
+    .shorts-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .shorts-track {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .short-slide {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px 14px 22px 16px;
+      overflow: hidden;
+    }
+
+    /* 쇼츠 배경 애니메이션 캔버스 느낌 */
+    .short-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px;
+    }
+    .short-visual-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.45);
+      animation: pulseGlow 2.4s infinite ease-in-out;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+    }
+    .short-center-caption {
+      font-size: 20px;
+      font-weight: 800;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.7);
+      line-height: 1.35;
+      margin-bottom: 8px;
+    }
+    .short-timer-pill {
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12.5px;
+      font-variant-numeric: tabular-nums;
+      color: #e0e0e0;
+    }
+
+    /* 순정 유튜브 쇼츠 상단 바 */
+    .shorts-top-bar {
+      position: absolute;
+      top: 46px;
+      left: 16px;
+      right: 16px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .shorts-logo {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+    }
+    .shorts-top-icons {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .icon-btn {
+      background: rgba(0,0,0,0.35);
+      border: none;
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.18); }
+
+    /* 순정 유튜브 우측 액션 버튼 열 */
+    .right-actions {
+      position: absolute;
+      right: 12px;
+      bottom: 28px;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+    .action-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      font-size: 11.5px;
+      color: #f1f1f1;
+    }
+    .action-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: transform 0.15s;
+    }
+    .action-item:active .action-circle { transform: scale(0.9); }
+
+    /* 좌측 하단 채널 정보 및 제목 */
+    .bottom-meta {
+      position: relative;
+      z-index: 10;
+      max-width: 76%;
+    }
+    .channel-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #ff0033;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .channel-handle {
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    .sub-btn {
+      background: #f1f1f1;
+      color: #0f0f0f;
+      border: none;
+      border-radius: 16px;
+      padding: 5px 11px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .video-title {
+      font-size: 13.5px;
+      line-height: 1.4;
+      color: #fff;
+    }
+
+    /* 쇼츠 하단 진행바 (reel_progress_bar) */
+    .reel-progress-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: rgba(255,255,255,0.25);
+      z-index: 25;
+    }
+    .reel-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: #ff0033;
+      transition: width 0.08s linear;
+    }
+
+    /* 순정 유튜브 하단 탭바 */
+    .yt-bottom-nav {
+      height: 58px;
+      background: #0f0f0f;
+      border-top: 1px solid #222;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 30;
+    }
+    .nav-tab {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10.5px;
+      color: #aaa;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 6px 12px;
+    }
+    .nav-tab.active {
+      color: #fff;
+      font-weight: 600;
+    }
+    .nav-tab span.nav-icon {
+      font-size: 19px;
+    }
+
+    /* 댓글 바텀시트 (열려 있을 때 자동 넘김 일시정지 검증용) */
+    .comments-sheet {
+      position: absolute;
+      left: 0; right: 0; bottom: 58px;
+      height: 62%;
+      background: #1f1f1f;
+      border-radius: 16px 16px 0 0;
+      z-index: 28;
+      transform: translateY(105%);
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 14px 16px;
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+    }
+    .comments-sheet.open {
+      transform: translateY(0);
+    }
+    .sheet-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #333;
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .comment-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #2a2a2a;
+      font-size: 13px;
+      line-height: 1.45;
+      color: #ddd;
+    }
+    .comment-author {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 3px;
+    }
+
+    /* 순정 유튜브 설정(Settings) 전체 화면 모달 */
+    .yt-settings-screen {
+      position: absolute;
+      inset: 0;
+      bottom: 58px;
+      background: #0f0f0f;
+      z-index: 29;
+      transform: translateX(100%);
+      transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+      padding: 52px 18px 20px;
+      overflow-y: auto;
+    }
+    .yt-settings-screen.open {
+      transform: translateX(0);
+    }
+    .settings-nav {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #222;
+    }
+    .back-btn {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .settings-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .settings-section-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #3ea6ff;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 14px 0 8px;
+    }
+    .settings-card {
+      background: #1a1a1a;
+      border-radius: 12px;
+      padding: 4px 14px;
+      border: 1px solid #272727;
+      margin-bottom: 16px;
+    }
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 12px;
+    }
+    .setting-row + .setting-row {
+      border-top: 1px solid #272727;
+    }
+    .setting-name {
+      font-size: 14.5px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .setting-desc {
+      font-size: 12px;
+      color: #aaa;
+      line-height: 1.35;
+    }
+    /* 스위치 */
+    .switch {
+      position: relative;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background-color: #3f3f3f; transition: 0.2s; border-radius: 26px;
+    }
+    .slider::before {
+      position: absolute; content: ""; height: 20px; width: 20px;
+      left: 3px; bottom: 3px; background-color: #fff; transition: 0.2s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #3ea6ff; }
+    input:checked + .slider::before { transform: translateX(20px); }
+
+    /* 우측 컨트롤 & 실시간 로그 대시보드 */
+    .control-panel {
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .panel-card {
+      background: #141418;
+      border: 1px solid #26262e;
+      border-radius: 16px;
+      padding: 20px;
+    }
+    .panel-card h2 {
+      font-size: 18px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-card p {
+      font-size: 13.5px;
+      color: #aaa;
+      line-height: 1.5;
+    }
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+    .ctrl-btn {
+      background: #23232b;
+      color: #fff;
+      border: 1px solid #343440;
+      padding: 9px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .ctrl-btn:hover { background: #2f2f3a; }
+    .ctrl-btn.primary {
+      background: #3ea6ff;
+      color: #000;
+      border-color: #3ea6ff;
+    }
+    .log-box {
+      background: #0b0b0e;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 12px;
+      height: 190px;
+      overflow-y: auto;
+      font-family: "SF Mono", Menlo, monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      color: #9cdcfe;
+    }
+    .log-entry { margin-bottom: 4px; }
+    .log-entry.highlight { color: #4ec9b0; font-weight: 600; }
+    .log-entry.warn { color: #dcdcaa; }
+  </style>
+</head>
+<body>
+
+  <!-- 스마트폰 순정 유튜브 시뮬레이터 -->
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="dynamic-island"></div>
+      <span>5G 100%</span>
+    </div>
+
+    <div class="shorts-viewport">
+      <!-- 상단 바: 우측 톱니바퀴/점3개 누르면 설정 진입 -->
+      <div class="shorts-top-bar">
+        <div class="shorts-logo">
+          <span style="color:#ff0033;">▶</span> Shorts
+        </div>
+        <div class="shorts-top-icons">
+          <button class="icon-btn" id="openSettingsTopBtn" title="유튜브 설정 열기">⚙️</button>
+        </div>
+      </div>
+
+      <!-- 쇼츠 슬라이드 트랙 (순정 화면 100% 그대로, 거슬리는 플로팅 버튼 없음!) -->
+      <div class="shorts-track" id="shortsTrack"></div>
+
+      <!-- 쇼츠 하단 진행바 (reel_progress_bar) -->
+      <div class="reel-progress-container">
+        <div class="reel-progress-fill" id="progressBarFill"></div>
+      </div>
+
+      <!-- 댓글 바텀시트 -->
+      <div class="comments-sheet" id="commentsSheet">
+        <div class="sheet-header">
+          <span>댓글 1.2천개</span>
+          <button class="back-btn" id="closeCommentsBtn">✕</button>
+        </div>
+        <div class="comment-item">
+          <div class="comment-author">@user_korea · 2시간 전</div>
+          댓글창을 읽고 있을 때는 영상이 끝나도 자동으로 넘어가지 않고 기다려 줍니다! 닫으면 다시 작동해요.
+        </div>
+        <div class="comment-item">
+          <div class="comment-author">@shorts_lover · 1시간 전</div>
+          화면에 거슬리는 버튼 하나도 없이 순정 유튜브 그대로라 너무 편하네요 ㅎㅎ
+        </div>
+      </div>
+
+      <!-- 유튜브 앱 내부 [설정(Settings)] 화면 -->
+      <div class="yt-settings-screen" id="settingsScreen">
+        <div class="settings-nav">
+          <button class="back-btn" id="closeSettingsBtn">←</button>
+          <span class="settings-title">설정 (Settings)</span>
+        </div>
+
+        <div class="settings-section-label">YouTube Shorts 자동 넘김 설정</div>
+        <div class="settings-card">
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">쇼츠 자동 넘김 (반복 재생 방지)</div>
+              <div class="setting-desc">영상이 끝까지(100%) 재생되면 반복 재생되지 않고 다음 쇼츠로 자동 스크롤합니다.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="settingAutoScroll" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">댓글·설명창 열람 시 일시정지</div>
+              <div class="setting-desc">댓글을 읽는 동안에는 영상이 끝나도 자동으로 넘어가지 않습니다.</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="settingPauseComments" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="settings-section-label">일반 YouTube 설정</div>
+        <div class="settings-card">
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">일반</div>
+              <div class="setting-desc">어두운 테마, 제한 모드, 위치</div>
+            </div>
+            <span style="color:#666;">›</span>
+          </div>
+          <div class="setting-row">
+            <div>
+              <div class="setting-name">화질 환경설정</div>
+              <div class="setting-desc">모바일 네트워크 및 Wi-Fi 화질</div>
+            </div>
+            <span style="color:#666;">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 순정 유튜브 네비게이션 바 -->
+    <div class="yt-bottom-nav">
+      <button class="nav-tab" id="tabShorts">
+        <span class="nav-icon">⚡</span>
+        <span>Shorts</span>
+      </button>
+      <button class="nav-tab" id="tabComments">
+        <span class="nav-icon">💬</span>
+        <span>댓글창 테스트</span>
+      </button>
+      <button class="nav-tab" id="tabSettings">
+        <span class="nav-icon">⚙️</span>
+        <span>설정 (ON/OFF)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 우측 설명 및 실시간 감지 엔진 모니터 -->
+  <div class="control-panel">
+    <div class="panel-card">
+      <h2>📱 순정 유튜브 앱 100% 그대로 동작</h2>
+      <p>
+        유튜브 영상 화면 위에는 <strong>어떠한 플로팅 버튼도 띄우지 않으며</strong>,
+        하단 또는 우측 상단의 <strong>[⚙️ 설정]</strong>에 들어가서 <strong>쇼츠 자동 넘김</strong>을 켜고 끌 수 있습니다.
+      </p>
+      <div class="btn-group">
+        <button class="ctrl-btn primary" id="quickOpenSettingsBtn">⚙️ 설정 화면 열기/닫기</button>
+        <button class="ctrl-btn" id="fastForwardBtn">⏩ 영상 끝부분(95%)으로 점프</button>
+        <button class="ctrl-btn" id="toggleCommentsQuickBtn">💬 댓글창 열기/닫기</button>
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <h2>🔍 실시간 종료 감지 엔진 로그 (iOS / Android)</h2>
+      <div class="log-box" id="logBox"></div>
+    </div>
+  </div>
+
+  <script>
+    const SHORTS_DATA = [
+      {
+        id: "short_1",
+        channel: "@cooking_daily",
+        title: "3분 만에 만드는 초간단 마늘 파스타 레시피 🍝 #요리 #쇼츠",
+        emoji: "🍝",
+        bg: "linear-gradient(160deg, #1f1c2c, #928dab)",
+        circleBg: "rgba(255, 110, 64, 0.25)",
+        durationSec: 6
+      },
+      {
+        id: "short_2",
+        channel: "@tech_insider_kr",
+        title: "아이폰 & 갤럭시 숨겨진 배터리 절약 꿀팁 3가지 🔋 #스마트폰",
+        emoji: "📱",
+        bg: "linear-gradient(160deg, #0f2027, #203a43, #2c5364)",
+        circleBg: "rgba(62, 166, 255, 0.25)",
+        durationSec: 6
+      },
+      {
+        id: "short_3",
+        channel: "@puppy_archive",
+        title: "산책 나가자고 말했을 때 강아지 반응 ㅋㅋㅋ 🐶💛 #강아지",
+        emoji: "🐶",
+        bg: "linear-gradient(160deg, #232526, #414345)",
+        circleBg: "rgba(255, 204, 0, 0.25)",
+        durationSec: 6
+      },
+      {
+        id: "short_4",
+        channel: "@music_vibes",
+        title: "밤에 듣기 좋은 감성 로파이 피아노 연주 🎹✨ #음악",
+        emoji: "🎹",
+        bg: "linear-gradient(160deg, #141e30, #243b55)",
+        circleBg: "rgba(186, 104, 200, 0.25)",
+        durationSec: 6
+      }
+    ];
+
+    const shortsTrack = document.getElementById("shortsTrack");
+    const progressBarFill = document.getElementById("progressBarFill");
+    const settingsScreen = document.getElementById("settingsScreen");
+    const commentsSheet = document.getElementById("commentsSheet");
+    const settingAutoScroll = document.getElementById("settingAutoScroll");
+    const settingPauseComments = document.getElementById("settingPauseComments");
+    const logBox = document.getElementById("logBox");
+
+    let currentIndex = 0;
+    let currentElapsed = 0;
+    let isSettingsOpen = false;
+    let isCommentsOpen = false;
+
+    function addLog(msg, type = "") {
+      const div = document.createElement("div");
+      div.className = "log-entry " + type;
+      const now = new Date().toLocaleTimeString("ko-KR", { hour12: false });
+      div.textContent = `[${now}] ${msg}`;
+      logBox.prepend(div);
+    }
+
+    function renderSlides() {
+      shortsTrack.innerHTML = SHORTS_DATA.map((item, idx) => `
+        <div class="short-slide" style="background: ${item.bg};">
+          <div class="short-bg">
+            <div class="short-visual-circle" style="background: ${item.circleBg};">${item.emoji}</div>
+            <div class="short-center-caption">쇼츠 #${idx + 1} 재생 중</div>
+            <div class="short-timer-pill" id="timerPill_${idx}">0.0초 / ${item.durationSec}.0초 (0%)</div>
+          </div>
+
+          <div class="right-actions">
+            <div class="action-item">
+              <div class="action-circle">👍</div>
+              <span>4.2만</span>
+            </div>
+            <div class="action-item" onclick="toggleComments()">
+              <div class="action-circle">💬</div>
+              <span>1.2천</span>
+            </div>
+            <div class="action-item">
+              <div class="action-circle">↪️</div>
+              <span>공유</span>
+            </div>
+          </div>
+
+          <div class="bottom-meta">
+            <div class="channel-row">
+              <div class="avatar">${item.channel[1].toUpperCase()}</div>
+              <span class="channel-handle">${item.channel}</span>
+              <button class="sub-btn">구독</button>
+            </div>
+            <div class="video-title">${item.title}</div>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function goToSlide(index, reason) {
+      currentIndex = index % SHORTS_DATA.length;
+      currentElapsed = 0;
+      shortsTrack.style.transform = `translateY(-${currentIndex * 100}%)`;
+      addLog(`${reason} → 쇼츠 #${currentIndex + 1} (${SHORTS_DATA[currentIndex].channel}) 이동 완료`, "highlight");
+    }
+
+    function toggleSettings(forceState) {
+      isSettingsOpen = typeof forceState === "boolean" ? forceState : !isSettingsOpen;
+      if (isSettingsOpen) isCommentsOpen = false;
+      settingsScreen.classList.toggle("open", isSettingsOpen);
+      commentsSheet.classList.toggle("open", isCommentsOpen);
+      updateNavTabs();
+    }
+
+    function toggleComments(forceState) {
+      isCommentsOpen = typeof forceState === "boolean" ? forceState : !isCommentsOpen;
+      if (isCommentsOpen) isSettingsOpen = false;
+      commentsSheet.classList.toggle("open", isCommentsOpen);
+      settingsScreen.classList.toggle("open", isSettingsOpen);
+      updateNavTabs();
+      if (isCommentsOpen) {
+        addLog("댓글창(Engagement Panel) 열림 감지 → 자동 넘김 일시 대기", "warn");
+      } else {
+        addLog("댓글창 닫힘 → 자동 넘김 감지 재개");
+      }
+    }
+
+    function updateNavTabs() {
+      document.getElementById("tabShorts").classList.toggle("active", !isSettingsOpen && !isCommentsOpen);
+      document.getElementById("tabComments").classList.toggle("active", isCommentsOpen);
+      document.getElementById("tabSettings").classList.toggle("active", isSettingsOpen);
+    }
+
+    // 이벤트 바인딩
+    document.getElementById("openSettingsTopBtn").addEventListener("click", () => toggleSettings(true));
+    document.getElementById("closeSettingsBtn").addEventListener("click", () => toggleSettings(false));
+    document.getElementById("tabSettings").addEventListener("click", () => toggleSettings());
+    document.getElementById("tabShorts").addEventListener("click", () => {
+      toggleSettings(false);
+      toggleComments(false);
+    });
+    document.getElementById("tabComments").addEventListener("click", () => toggleComments());
+    document.getElementById("closeCommentsBtn").addEventListener("click", () => toggleComments(false));
+
+    document.getElementById("quickOpenSettingsBtn").addEventListener("click", () => toggleSettings());
+    document.getElementById("toggleCommentsQuickBtn").addEventListener("click", () => toggleComments());
+    document.getElementById("fastForwardBtn").addEventListener("click", () => {
+      const dur = SHORTS_DATA[currentIndex].durationSec;
+      currentElapsed = dur * 0.94;
+      addLog("재생 위치를 94% 지점으로 이동했습니다 (곧 종료 감지)");
+    });
+
+    settingAutoScroll.addEventListener("change", () => {
+      addLog(
+        settingAutoScroll.checked
+          ? "⚙️ [설정 변경] 쇼츠 자동 넘김: 켜짐 (ON)"
+          : "⚙️ [설정 변경] 쇼츠 자동 넘김: 꺼짐 (OFF - 기본 반복 재생)",
+        settingAutoScroll.checked ? "highlight" : "warn"
+      );
+    });
+
+    // 100ms 단위 쇼츠 플레이어 & 진행바 시뮬레이션 루프
+    setInterval(() => {
+      if (isSettingsOpen) return;
+
+      const currentShort = SHORTS_DATA[currentIndex];
+      const dur = currentShort.durationSec;
+      currentElapsed += 0.1;
+
+      const ratio = Math.min(currentElapsed / dur, 1);
+      const pct = Math.round(ratio * 100);
+      progressBarFill.style.width = `${pct}%`;
+
+      const pill = document.getElementById(`timerPill_${currentIndex}`);
+      if (pill) {
+        pill.textContent = `${currentElapsed.toFixed(1)}초 / ${dur.toFixed(1)}초 (${pct}%)`;
+      }
+
+      // 영상이 끝(99% 이상)에 도달했을 때 처리
+      if (ratio >= 0.99) {
+        if (!settingAutoScroll.checked) {
+          currentElapsed = 0;
+          addLog(`쇼츠 #${currentIndex + 1} 재생 끝 → [자동 넘김 OFF 상태] 처음부터 반복 재생(Loop)`, "warn");
+          return;
+        }
+
+        if (isCommentsOpen && settingPauseComments.checked) {
+          currentElapsed = 0;
+          addLog(`쇼츠 #${currentIndex + 1} 재생 끝 → 댓글창 열람 중이므로 넘어가지 않고 대기`, "warn");
+          return;
+        }
+
+        goToSlide(currentIndex + 1, `✅ 쇼츠 #${currentIndex + 1} (100% 종료 감지)`);
+      }
+    }, 100);
+
+    renderSlides();
+    updateNavTabs();
+    addLog("순정 YouTube 앱 쇼츠 자동 넘김 엔진 시작됨 (기본값: 설정 ON)", "highlight");
+  </script>
+</body>
+</html>
+
