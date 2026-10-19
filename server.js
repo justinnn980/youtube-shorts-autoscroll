@@ -246,6 +246,11 @@ const server = http.createServer((req, res) => {
 
   // 다운로드 엔드포인트 (/download/...)
   const downloadMap = {
+    "/download/AutoShorts-App.ipa": {
+      file: path.join(DIST_DIR, "AutoShorts-App.ipa"),
+      name: "AutoShorts-App.ipa",
+      key: "ios_ipa"
+    },
     "/download/YouTube-AutoShorts.ipa": {
       file: path.join(DIST_DIR, "YouTube-AutoShorts.ipa"),
       name: "YouTube-AutoShorts.ipa",

@@ -85,6 +85,13 @@
     state.lastScrollAt = now;
     state.maxRatioForCurrentVideo = 0;
 
+    // 0순위: 모바일 YouTube Shorts 캐러셀 (m.youtube.com/shorts 내 shorts-carousel 다음 동영상 버튼)
+    const a11yBtns = document.querySelectorAll(".ytShortsCarouselShortsA11yNavButton");
+    if (a11yBtns.length >= 2 && !a11yBtns[1].disabled) {
+      a11yBtns[1].click();
+      return;
+    }
+
     // 1순위: 공식 '다음 동영상' 네비게이션 버튼 클릭
     const nextBtn =
       document.querySelector("#navigation-button-down button") ||
